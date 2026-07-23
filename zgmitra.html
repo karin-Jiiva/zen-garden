@@ -1,0 +1,637 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Zen Garden</title>
+
+  <style>
+    @import url(
+      "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500&display=swap"
+    );
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background: linear-gradient(
+        135deg,
+        #e8f5e9 0%,
+        #c8e6c9 100%
+      );
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .garden {
+      width: 100%;
+      max-width: 440px;
+      padding: 35px 25px;
+
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+
+      text-align: center;
+    }
+
+    h1 {
+      font-family: "Playfair Display", serif;
+      font-size: 2rem;
+      margin: 0 0 10px;
+    }
+
+    #peace {
+      font-size: 1.45rem;
+      margin: 10px 0 15px;
+    }
+
+    .progress-container {
+      height: 12px;
+      margin: 20px 0;
+      overflow: hidden;
+
+      background: #e0f2e0;
+      border-radius: 999px;
+    }
+
+    #progress {
+      width: 50%;
+      height: 100%;
+
+      background: linear-gradient(
+        90deg,
+        #4caf50,
+        #66bb6a
+      );
+
+      border-radius: 999px;
+      transition: width 0.6s ease;
+    }
+
+    #display {
+      min-height: 110px;
+      margin: 25px 0 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 3.5rem;
+      line-height: 1.3;
+    }
+
+    #display.message {
+      padding: 10px;
+      font-size: 1.25rem;
+      color: #2e5d35;
+    }
+
+    #timer {
+      margin: 15px 0 30px;
+
+      font-family: "Playfair Display", serif;
+      font-size: 4.8rem;
+      font-weight: 700;
+      color: #d32f2f;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      padding: 16px 18px;
+      margin: 6px;
+
+      border: none;
+      border-radius: 999px;
+
+      font-family: inherit;
+      font-size: 1.08rem;
+
+      cursor: pointer;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+      box-shadow: none;
+    }
+
+    button.green {
+      background: #4caf50;
+      color: white;
+    }
+
+    button.blue {
+      background: #29b6f6;
+      color: white;
+    }
+
+    button.pause {
+      background: #ffb74d;
+      color: #5d3500;
+    }
+
+    button.leave {
+      width: 100%;
+      background: #81c784;
+      color: #1b5e20;
+    }
+
+    @media (max-width: 480px) {
+      .garden {
+        padding: 28px 18px;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      #peace {
+        font-size: 1.2rem;
+      }
+
+      #timer {
+        font-size: 3.8rem;
+      }
+
+      button {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="garden">
+    <h1>🌿 Zen Garden 🌿</h1>
+
+    <p id="peace">
+      Inner Peace: 50 / 100 🕊️
+    </p>
+
+    <div
+      class="progress-container"
+      role="progressbar"
+      aria-label="Inner peace"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="50"
+    >
+      <div id="progress"></div>
+    </div>
+
+    <div
+      id="display"
+      aria-live="polite"
+    >
+      🌱 🌿 🪨 🌸 🍃
+    </div>
+
+    <div
+      id="timer"
+      aria-live="polite"
+    >
+      30:00
+    </div>
+
+    <div class="button-group">
+      <button
+        class="green"
+        type="button"
+        onclick="breathe()"
+      >
+        🧘 Breathe Deeply
+      </button>
+
+      <button
+        class="green"
+        type="button"
+        onclick="tendGarden()"
+      >
+        🌱 Tend Garden
+      </button>
+
+      <button
+        class="green"
+        type="button"
+        onclick="randomMoment()"
+      >
+        🌸 Random Moment
+      </button>
+
+      <button
+        id="meditationButton"
+        class="blue"
+        type="button"
+        onclick="startMeditation()"
+      >
+        ⏱️ Start 30-Minute Meditation
+      </button>
+
+      <button
+        id="pauseButton"
+        class="pause"
+        type="button"
+        onclick="pauseMeditation()"
+        disabled
+      >
+        ⏸️ Pause
+      </button>
+
+      <button
+        class="leave"
+        type="button"
+        onclick="resetGarden()"
+      >
+        Leave Garden
+      </button>
+    </div>
+  </main>
+
+  <script>
+    let peace = 50;
+
+    const meditationLength = 30 * 60;
+
+    let timeLeft = meditationLength;
+    let timerInterval = null;
+    let isPaused = false;
+    let messageTimeout = null;
+
+    const peaceText =
+      document.getElementById("peace");
+
+    const progressBar =
+      document.getElementById("progress");
+
+    const progressContainer =
+      document.querySelector(".progress-container");
+
+    const display =
+      document.getElementById("display");
+
+    const timer =
+      document.getElementById("timer");
+
+    const meditationButton =
+      document.getElementById("meditationButton");
+
+    const pauseButton =
+      document.getElementById("pauseButton");
+
+    const randomMoments = [
+      {
+        text: "🍃 A soft breeze passes through the garden.",
+        peace: 6
+      },
+      {
+        text: "🕊️ A white bird rests quietly beside you.",
+        peace: 12
+      },
+      {
+        text: "🪷 A lotus opens without hurry.",
+        peace: 15
+      },
+      {
+        text: "☁️ The clouds drift gently across the sky.",
+        peace: 8
+      },
+      {
+        text: "🌸 A blossom falls softly onto the path.",
+        peace: 10
+      },
+      {
+        text: "💧 A drop of water shines in the morning light.",
+        peace: 9
+      }
+    ];
+
+    function getGardenDisplay() {
+      if (peace >= 100) {
+        return "🪷 🌸 🌺 🌻 🌿 ✨ 🕊️";
+      }
+
+      if (peace >= 85) {
+        return "🌸 🌺 🌿 🪷 🌼 🍀 ✨";
+      }
+
+      if (peace >= 65) {
+        return "🌱 🌿 🌸 🍃 🪨 🌼";
+      }
+
+      return "🌱 🌿 🪨 🌸 🍃";
+    }
+
+    function updateGarden() {
+      peaceText.textContent =
+        `Inner Peace: ${peace} / 100 🕊️`;
+
+      progressBar.style.width =
+        `${peace}%`;
+
+      progressContainer.setAttribute(
+        "aria-valuenow",
+        peace
+      );
+
+      if (!display.classList.contains("message")) {
+        display.textContent = getGardenDisplay();
+      }
+    }
+
+    function changePeace(amount) {
+      peace = Math.max(
+        0,
+        Math.min(100, peace + amount)
+      );
+
+      updateGarden();
+    }
+
+    function showMessage(text, duration = 3500) {
+      if (messageTimeout) {
+        clearTimeout(messageTimeout);
+      }
+
+      display.classList.add("message");
+      display.textContent = text;
+
+      messageTimeout = setTimeout(() => {
+        display.classList.remove("message");
+        display.textContent = getGardenDisplay();
+        messageTimeout = null;
+      }, duration);
+    }
+
+    function formatTime(totalSeconds) {
+      const minutes =
+        Math.floor(totalSeconds / 60);
+
+      const seconds =
+        totalSeconds % 60;
+
+      return `${minutes}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+    }
+
+    function breathe() {
+      changePeace(14);
+
+      showMessage(
+        "🧘 Breathe in slowly. Breathe out gently."
+      );
+    }
+
+    function tendGarden() {
+      changePeace(11);
+
+      showMessage(
+        "🌱 You tend the garden with patience and care."
+      );
+    }
+
+    function randomMoment() {
+      const index =
+        Math.floor(
+          Math.random() * randomMoments.length
+        );
+
+      const moment = randomMoments[index];
+
+      changePeace(moment.peace);
+      showMessage(moment.text);
+    }
+
+    function updateTimerButtons() {
+      if (timerInterval) {
+        meditationButton.disabled = true;
+        pauseButton.disabled = false;
+
+        pauseButton.textContent =
+          isPaused
+            ? "▶️ Continue"
+            : "⏸️ Pause";
+      } else {
+        meditationButton.disabled = false;
+        pauseButton.disabled = true;
+        pauseButton.textContent = "⏸️ Pause";
+      }
+    }
+
+    function startMeditation() {
+      if (timerInterval) {
+        return;
+      }
+
+      timeLeft = meditationLength;
+      isPaused = false;
+
+      timer.textContent =
+        formatTime(timeLeft);
+
+      showMessage(
+        "🪷 Your meditation has begun.",
+        2500
+      );
+
+      timerInterval = setInterval(() => {
+        if (isPaused) {
+          return;
+        }
+
+        timeLeft -= 1;
+
+        timer.textContent =
+          formatTime(timeLeft);
+
+        if (timeLeft <= 0) {
+          completeMeditation();
+        }
+      }, 1000);
+
+      updateTimerButtons();
+    }
+
+    function pauseMeditation() {
+      if (!timerInterval) {
+        return;
+      }
+
+      isPaused = !isPaused;
+
+      if (isPaused) {
+        showMessage(
+          "🍃 The timer is paused.",
+          2000
+        );
+      } else {
+        showMessage(
+          "🪷 Your meditation continues.",
+          2000
+        );
+      }
+
+      updateTimerButtons();
+    }
+
+    function completeMeditation() {
+      clearInterval(timerInterval);
+
+      timerInterval = null;
+      isPaused = false;
+      timeLeft = 0;
+
+      timer.textContent = "0:00";
+
+      changePeace(35);
+
+      showMessage(
+        "✨ Meditation complete. May this peace stay with you. 🕊️",
+        6000
+      );
+
+      playGentleBell();
+      updateTimerButtons();
+    }
+
+    function playGentleBell() {
+      try {
+        const AudioContextClass =
+          window.AudioContext ||
+          window.webkitAudioContext;
+
+        if (!AudioContextClass) {
+          return;
+        }
+
+        const audioContext =
+          new AudioContextClass();
+
+        const oscillator =
+          audioContext.createOscillator();
+
+        const gain =
+          audioContext.createGain();
+
+        oscillator.type = "sine";
+
+        oscillator.frequency.setValueAtTime(
+          432,
+          audioContext.currentTime
+        );
+
+        gain.gain.setValueAtTime(
+          0.0001,
+          audioContext.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.22,
+          audioContext.currentTime + 0.15
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.0001,
+          audioContext.currentTime + 3
+        );
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        oscillator.start(
+          audioContext.currentTime
+        );
+
+        oscillator.stop(
+          audioContext.currentTime + 3
+        );
+
+        oscillator.addEventListener(
+          "ended",
+          () => {
+            audioContext.close();
+          }
+        );
+      } catch (error) {
+        console.warn(
+          "The meditation bell could not play:",
+          error
+        );
+      }
+    }
+
+    function resetGarden() {
+      const shouldReset =
+        window.confirm(
+          "Would you like to leave and reset the garden?"
+        );
+
+      if (!shouldReset) {
+        return;
+      }
+
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+
+      if (messageTimeout) {
+        clearTimeout(messageTimeout);
+      }
+
+      timerInterval = null;
+      messageTimeout = null;
+      isPaused = false;
+
+      peace = 50;
+      timeLeft = meditationLength;
+
+      display.classList.remove("message");
+      timer.textContent =
+        formatTime(timeLeft);
+
+      updateGarden();
+      updateTimerButtons();
+    }
+
+    timer.textContent =
+      formatTime(timeLeft);
+
+    updateGarden();
+    updateTimerButtons();
+  </script>
+</body>
+</html>
